@@ -1,5 +1,5 @@
 # jest-client-demo
-JestClient实现ElasticSearch的操作
+JestClient实现对ElasticSearch的操作
 
 版本:
   springboot: 2.1.0
