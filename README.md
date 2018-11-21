@@ -1,5 +1,6 @@
 # jest-client-demo
-JestClient实现对ElasticSearch的操作
+JestClient通过写json来实现对ElasticSearch的操作,
+使用jestClient比较明显的一个优势,不用因为es的版本升级导致API发生改变而更改代码。
 
 ```
 	<parent>
