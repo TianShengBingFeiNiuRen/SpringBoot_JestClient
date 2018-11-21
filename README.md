@@ -7,3 +7,6 @@ JestClient实现对ElasticSearch的操作
 
 ESService.java跳转:
 https://github.com/TianShengBingFeiNiuRen/jest-client-demo/blob/master/src/main/java/com/andon/jestclientdemo/service/ESService.java
+
+CSDN:
+https://blog.csdn.net/weixin_39792935/article/details/84328897
