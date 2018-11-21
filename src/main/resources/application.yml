@@ -1,0 +1,13 @@
+server:
+  port: 8081
+
+spring:
+  elasticsearch:
+    jest:
+      uris: http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****
+#     jestClient(http¡¨Ω”es)
+
+kline_index : kline
+kline_type : kline
+quote1: BTC
+quote2: USDT
