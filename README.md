@@ -1,4 +1,4 @@
-# jest-client-demo
+# JestClient
 JestClient通过写json来实现对ElasticSearch的操作,
 
 使用jestClient比较明显的一个优势就是，不用因为es的版本升级导致API发生改变而更改代码。
@@ -36,7 +36,7 @@ JestClient通过写json来实现对ElasticSearch的操作,
 ```
 
 ESService.java跳转:
-https://github.com/TianShengBingFeiNiuRen/jest-client-demo/blob/master/src/main/java/com/andon/jestclientdemo/service/ESService.java
+https://github.com/TianShengBingFeiNiuRen/SpringBoot_JestClient/blob/master/src/main/java/com/andon/jestclientdemo/service/ESService.java
 
 CSDN:
 https://blog.csdn.net/weixin_39792935/article/details/84328897
