@@ -10,17 +10,28 @@ JestClient通过写json来实现对ElasticSearch的操作,
 		<version>2.1.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
+	<properties>
+        	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        	<java.version>1.8</java.version>
+        	<elasticsearch.version>5.6.9</elasticsearch.version>
+        	<jest.version>5.3.4</jest.version>
+    	</properties>
 	
-	<dependency>
-		<groupId>org.elasticsearch</groupId>
-		<artifactId>elasticsearch</artifactId>
-		<version>5.6.9</version>
-	</dependency>
-	<dependency>
-		<groupId>io.searchbox</groupId>
-		<artifactId>jest</artifactId>
-		<version>5.3.4</version>
-	</dependency>
+	<dependencies>
+        ...
+        	<dependency>
+            		<groupId>org.elasticsearch</groupId>
+            		<artifactId>elasticsearch</artifactId>
+            		<version>${elasticsearch.version}</version>
+        	</dependency>
+        	<dependency>
+            		<groupId>io.searchbox</groupId>
+            		<artifactId>jest</artifactId>
+            		<version>${jest.version}</version>
+        	</dependency>
+    	</dependencies>
 ```
 
 ESService.java跳转:
