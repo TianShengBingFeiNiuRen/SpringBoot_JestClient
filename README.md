@@ -35,8 +35,7 @@ JestClient通过写json来实现对ElasticSearch的操作,
     	</dependencies>
 ```
 
-ESService.java跳转:
-https://github.com/TianShengBingFeiNiuRen/SpringBoot_JestClient/blob/master/src/main/java/com/andon/jestclientdemo/service/ESService.java
 
-CSDN:
-https://blog.csdn.net/weixin_39792935/article/details/84328897
+跳转: [ESService.java](https://github.com/TianShengBingFeiNiuRen/SpringBoot_JestClient/blob/master/src/main/java/com/andon/jestclientdemo/service/ESService.java)
+
+CSDN: [link](https://blog.csdn.net/weixin_39792935/article/details/84328897).
