@@ -4,8 +4,7 @@ import com.andon.jestclientdemo.domain.KLine;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
-import io.searchbox.core.Search;
-import io.searchbox.core.SearchResult;
+import io.searchbox.core.*;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.DeleteIndex;
 import io.searchbox.indices.mapping.GetMapping;
@@ -41,6 +40,36 @@ public class ESService {
     private String BTC;
     @Value("${quote2}")
     private String USDT;
+
+    /**
+     * 获取doc
+     */
+    public KLine getKlineDataById(String index, String type, String id) {
+        Get get = new Get.Builder(index, id).type(type).build();
+        try {
+            DocumentResult documentResult = jestClient.execute(get);
+            return documentResult.getSourceAsObject(KLine.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            LOG.warn("getKlineDataById again!! error={}", e.getMessage());
+            return getKlineDataById(index, type, id);
+        }
+    }
+
+    /**
+     * 插入或更新
+     */
+    public void insertOrUpdateKLineData(KLine kline, String id, String index, String type){
+        Index.Builder builder = new Index.Builder(kline).id(id).refresh(true);
+        Index indexDoc = builder.index(index).type(type).build();
+        try {
+            DocumentResult result = jestClient.execute(indexDoc);
+            LOG.info("status:" + result.isSucceeded() + " index:" + result.getIndex() + " type:" + result.getType() + " id:" + result.getId());
+        } catch (IOException e) {
+            LOG.warn("insertOrUpdateKLineData again!! error={}", e.getMessage());
+            insertOrUpdateKLineData(kline, id, index, type);
+        }
+    }
 
     /**
      * json查询
