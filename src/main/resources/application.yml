@@ -11,3 +11,7 @@ kline_index : kline
 kline_type : kline
 quote1: BTC
 quote2: USDT
+
+es:
+  index:
+    macdResonance: macd_resonance

@@ -1,6 +1,8 @@
 package com.andon.jestclientdemo.service;
 
 import com.andon.jestclientdemo.domain.KLine;
+import com.andon.jestclientdemo.domain.MacdResonance;
+import com.andon.jestclientdemo.util.GsonUtil;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -17,11 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Service
 public class ESService {
@@ -40,6 +44,8 @@ public class ESService {
     private String BTC;
     @Value("${quote2}")
     private String USDT;
+    @Value("${es.index.macdResonance}")
+    private String macdResonanceIndex;
 
     /**
      * 获取doc
@@ -59,7 +65,7 @@ public class ESService {
     /**
      * 插入或更新
      */
-    public void insertOrUpdateKLineData(KLine kline, String id, String index, String type){
+    public void insertOrUpdateKLineData(KLine kline, String id, String index, String type) {
         Index.Builder builder = new Index.Builder(kline).id(id).refresh(true);
         Index indexDoc = builder.index(index).type(type).build();
         try {
@@ -120,6 +126,103 @@ public class ESService {
         KLine kLine = search.getSourceAsObject(KLine.class, false);
         LOG.info("base={}, quote={}, startTime={}, endTime={}, Kline = {}", base, quote, startTime, endTime, kLine);
         return kLine;
+    }
+
+    /**
+     * 多条件组合JSON查询
+     */
+    public String searchMacdResonance(String startTime, String endTime, int pageNum, int pageSize, String domain, String pair, String quote, String macdType, String macdTimeType) {
+        String index = macdResonanceIndex;
+        String type = macdResonanceIndex;
+        /*String startTime = "1979-01-01 00:00:00";
+        String endTime = "1979-02-01 00:00:00";
+        int pageNum = 1;
+        int pageSize = 12;
+
+        String domain = "www.binance.com";
+        String base = "BTC";
+        String quote = "USDT";
+        String pair = base + "-" + quote;
+        String macdType = "底背离,顶背离";
+        String macdTimeType = "5min,15min,30min";*/
+
+        String domainJson = "";
+        if (!ObjectUtils.isEmpty(domain)) {
+            domainJson = "{ \"match\": { \"domain\": \"" + domain + "\" } },\n";
+        }
+        String pairJson = "";
+        if (!ObjectUtils.isEmpty(pair)) {
+            pairJson = "{ \"match\": { \"pair\": \"" + pair + "\" } },\n";
+        }
+        String quoteJson = "";
+        if (!ObjectUtils.isEmpty(quote)) {
+            quoteJson = "{ \"match\": { \"quote\": \"" + quote + "\" } },\n";
+        }
+        String macdTypeMustJson = "";
+        if (!ObjectUtils.isEmpty(macdType) && macdType.split(",").length == 1) {
+            macdTypeMustJson = "{ \"match\": { \"macdType\": \"" + macdType + "\" } },\n";
+        }
+        StringBuilder macdTypeShouldJson = new StringBuilder();
+        if (!ObjectUtils.isEmpty(macdType) && macdType.split(",").length != 1) {
+            String[] split = macdType.split(",");
+            for (int i = 0; i < split.length; i++) {
+                if (i == 0) {
+                    macdTypeShouldJson.append("{ \"match\": { \"macdType\": \"").append(split[i]).append("\" } }\n");
+                } else {
+                    macdTypeShouldJson.append(",{ \"match\": { \"macdType\": \"").append(split[i]).append("\" } }\n");
+                }
+            }
+        }
+        String macdTimeTypeMustJson = "";
+        if (!ObjectUtils.isEmpty(macdTimeType) && macdTimeType.split(",").length == 1) {
+            macdTimeTypeMustJson = "{ \"match\": { \"macdTimeType\": \"" + macdTimeType + "\" } },\n";
+        }
+        StringBuilder macdTimeTypeShouldJson = new StringBuilder();
+        if (!ObjectUtils.isEmpty(macdTimeType) && macdType.split(",").length != 1) {
+            String[] split = macdTimeType.split(",");
+            for (int i = 0; i < split.length; i++) {
+                if (i == 0) {
+                    macdTimeTypeShouldJson.append("{ \"match\": { \"macdTimeType\": \"").append(split[i]).append("\" } }\n");
+                } else {
+                    macdTimeTypeShouldJson.append(",{ \"match\": { \"macdTimeType\": \"").append(split[i]).append("\" } }\n");
+                }
+            }
+        }
+        String json = "{\n" +
+                "\"from\": " + (pageNum - 1) + ",\n" +
+                "\"size\": " + pageSize + ",\n" +
+                "\"query\": {\n" +
+                "   \"bool\": {\n" +
+                "       \"must\": [\n" +
+                "           " + domainJson +
+                "           " + pairJson +
+                "           " + quoteJson +
+                "           " + macdTypeMustJson +
+                "           " + macdTimeTypeMustJson +
+                "           { \"range\": { \"time\": {\n" +
+                "                               \"gte\": \"" + startTime + "\",\n" +
+                "                               \"lt\": \"" + endTime + "\"\n" +
+                "                       }\n" +
+                "                   }" +
+                "               }\n" +
+                "           ]\n," +
+                "       \"should\": [" +
+                "           " + macdTypeShouldJson +
+                "           ], " +
+                "       \"should\": [" +
+                "           " + macdTimeTypeShouldJson +
+                "           ]" +
+                "       }\n" +
+                "   },\n" +
+                "\"sort\": {\n" +
+                "   \"time\": {\n" +
+                "       \"order\": \"desc\"\n" +
+                "       }\n" +
+                "   }\n" +
+                "}";
+        SearchResult searchResult = jsonSearch(json, index, type);
+        List<MacdResonance> sourceAsObjectList = searchResult.getSourceAsObjectList(MacdResonance.class, true);
+        return GsonUtil.GSON.toJson(sourceAsObjectList);
     }
 
     /**
