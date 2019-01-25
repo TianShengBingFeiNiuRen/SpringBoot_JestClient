@@ -85,11 +85,11 @@ public class ESService {
         try {
             return jestClient.execute(search);
         } catch (Exception e) {
-            LOG.warn("{} search failure, error = {}", indexName, e.getMessage());
+            LOG.warn("index:{}, type:{}, search again!! error = {}", indexName, typeName, e.getMessage());
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e1) {
-                e1.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
             return jsonSearch(json, indexName, typeName);
         }
