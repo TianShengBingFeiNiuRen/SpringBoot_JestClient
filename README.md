@@ -20,8 +20,6 @@ JestClient通过写json来实现对ElasticSearch的操作,
     	</properties>
 	
 	<dependencies>
-        	…… ……
-		…… ……
         	<dependency>
             		<groupId>org.elasticsearch</groupId>
             		<artifactId>elasticsearch</artifactId>
