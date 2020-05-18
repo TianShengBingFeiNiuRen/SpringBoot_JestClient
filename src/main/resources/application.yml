@@ -5,7 +5,8 @@ spring:
   elasticsearch:
     jest:
       uris: http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****
-#     jestClient(httpÁ¬½Óes)
+uris: http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****,http://*.*.*.*:****
+#     jestClient(httpÃÂ¬Â½Ã“es)
 
 kline_index : kline
 kline_type : kline
