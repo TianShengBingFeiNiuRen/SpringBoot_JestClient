@@ -26,8 +26,22 @@ public class ESService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ESService.class);
 
-    @Resource
-    JestClient jestClient;
+    private JestClient jestClient;
+    @Value("${uris}")
+    private String url;
+
+    @PostConstruct
+    public void init() {
+        List<String> uris = Arrays.asList(url.split(","));
+        JestClientFactory jestClientFactory = new JestClientFactory();
+        jestClientFactory.setHttpClientConfig(new HttpClientConfig
+                .Builder(uris)
+                .connTimeout(10000)
+                .readTimeout(10000)
+                .multiThreaded(true)
+                .build());
+        jestClient = jestClientFactory.getObject();
+    }
 
     /**
      * 发送json查询
