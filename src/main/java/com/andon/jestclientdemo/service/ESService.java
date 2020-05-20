@@ -38,11 +38,11 @@ public class ESService {
                 .Builder(uris)
                 .connTimeout(10000)
                 .readTimeout(10000)
+                .maxConnectionIdleTime(1500L, TimeUnit.MILLISECONDS)
                 .multiThreaded(true)
                 .build());
         jestClient = jestClientFactory.getObject();
     }
-
     /**
      * 发送json查询
      */
